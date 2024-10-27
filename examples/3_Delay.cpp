@@ -3,8 +3,8 @@
 TaskHandle_t task1_handle = NULL;
 TaskHandle_t task2_handle = NULL;
 
-#define LED_PIN 10             // Define LED pin
-#define LDR_PIN 11             // Define LDR pin (analog)
+#define LDR_PIN 10             // Define LDR pin (analog)
+#define LED_PIN 11             // Define LED pin
 #define TASK1_PERIOD pdMS_TO_TICKS(2000) // 2 seconds
 #define TASK2_PERIOD pdMS_TO_TICKS(500)   // 0.5 seconds
 
