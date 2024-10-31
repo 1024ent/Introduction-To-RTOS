@@ -7,7 +7,7 @@ TaskHandle_t SwitchTaskHandle = NULL;
 #define SWITCH_PIN 12       // Slide Switch connected to digital pin 12
 
 // Task to blink LED
-void LEDTask(void *pvparameter){
+void LEDTask(void *pvParameters){
     pinMode(LED_PIN, OUTPUT);
 
     while(1){
@@ -19,7 +19,7 @@ void LEDTask(void *pvparameter){
 }
 
 // Task to monitor slide switch press
-void SwitchTask(void *pvparameter){
+void SwitchTask(void *pvParameters){
     pinMode(SWITCH_PIN, INPUT);     // Set slide switch pin as input 
 
     while(1){

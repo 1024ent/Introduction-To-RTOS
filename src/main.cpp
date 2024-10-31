@@ -1,59 +1,41 @@
 #include <Arduino.h>
 
-TaskHandle_t LEDTaskHandle = NULL;
-TaskHandle_t LDRTaskHandle = NULL;
+// Define pin numbers
+#define LED_PIN 11      // LED connected to digital pin 11
+#define SWITCH_PIN 12       // Slide Switch connected to digital pin 12
 
-#define LED_PIN 11          // LED connected to digital pin 13
-#define LDR_PIN 10          // LDR connected to analog pin A0
-#define LIGHT_THRESHOLD 500 // Threshold for light level (adjust as needed)
+// Task handle
+TaskHandle_t taskHandle = NULL;
 
-void LEDTask(void *pvParameters) {
-  // Initial delay to keep the LED on before the first toggle
-  vTaskDelay(pdMS_TO_TICKS(1000)); // Wait 1 second before toggling
-
-  for (;;) {
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-    Serial.println("LED Toggled");
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Toggle every 1 second
-
-    // Suspend the task after toggling once
-    vTaskSuspend(NULL);
-  }
-}
-
-void LDRTask(void *pvParameters) {
-  // This task continuously monitors light levels from the LDR
-  for (;;) {
-    int lightLevel = analogRead(LDR_PIN); // Read LDR value
-    Serial.print("Light Level: ");
-    Serial.println(lightLevel);
-
-    if (lightLevel < LIGHT_THRESHOLD) {
-      // If it's dark, resume the LED task to allow it to toggle
-      Serial.println("It's dark. Resuming LED Task.");
-      vTaskResume(LEDTaskHandle);
+// Function to read the switch state and control the LED
+void vTaskToggleLED(void *pvParameters){
+  while(1){
+    // Read the state of the switch (LOW when on, HIGH when OFF)
+    if(digitalRead(SWITCH_PIN) == LOW){
+      digitalWrite(LED_PIN, HIGH);    // Turn ON the LED
     } else {
-      // If it's bright, suspend the LED task to conserve energy
-      Serial.println("It's bright. Suspending LED Task.");
-      vTaskSuspend(LEDTaskHandle);
+      digitalWrite(LED_PIN, LOW);     // Turn OFF the LED
     }
-
-    vTaskDelay(pdMS_TO_TICKS(500)); // Check light level every 500ms
+    vTaskDelay(pdMS_TO_TICKS(100));   // Delay for 100ms
   }
 }
 
-void setup() {
+void setup(){
   Serial.begin(115200);
+
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);   // Start with the LED off
+  pinMode(SWITCH_PIN, INPUT_PULLUP);
 
-  // Create LED Task, suspended initially
-  xTaskCreate(LEDTask, "LED Task", 1024, NULL, 1, &LEDTaskHandle);
+  xTaskCreate(vTaskToggleLED, "Toggle LED", 2048, NULL, 1, &taskHandle);
 
-  // Create LDR Task
-  xTaskCreate(LDRTask, "LDR Task", 2048, NULL, 1, &LDRTaskHandle);
+  vTaskStartScheduler();
 }
 
-void loop() {
-  // FreeRTOS takes control after setup, loop remains empty
+void loop(){
+  // This loop will run for 10 seconds, then stop the scheduler
+  static uint32_t startTime = millis();
+  if(millis() - startTime > 10000) {  // 10 seconds
+    Serial.println("Stopping scheduler...");
+    vTaskEndScheduler();
+  }
 }
