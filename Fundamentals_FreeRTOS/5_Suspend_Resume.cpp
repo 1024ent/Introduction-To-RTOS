@@ -3,8 +3,8 @@
 TaskHandle_t LEDTaskHandle = NULL;
 TaskHandle_t LDRTaskHandle = NULL;
 
-#define LED_PIN 11          // LED connected to digital pin 13
-#define LDR_PIN 10          // LDR connected to analog pin A0
+#define LED_PIN 4          // LED connected to digital pin 13
+#define LDR_PIN 14          // LDR connected to analog pin A0
 #define LIGHT_THRESHOLD 500 // Threshold for light level (adjust as needed)
 
 void LEDTask(void *pvParameters) {

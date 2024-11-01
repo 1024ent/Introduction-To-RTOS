@@ -7,12 +7,12 @@
 #define PWM_MAX_DUTY 255
 #define PWM_MIN_DUTY 0
 
-int sw1 = 4;
-int led0pin = 5;
-int led1pin = 11;
-int led2pin = 12;
-int led3pin = 13;
-int led4pin = 14;
+int sw1 = 13;
+int led0pin = 4;
+int led1pin = 5;
+int led2pin = 6;
+int led3pin = 7;
+int led4pin = 8;
 int switchState = 0; 
 bool led3state = LOW;
 bool led4state = LOW;
